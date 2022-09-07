@@ -10,8 +10,8 @@ fastify.get('/todolist/:todolistId', async (request, response) => {
         const todoList = await todoListRepository.findById(id);
         response.send(todoList);
     } catch (error) {
-        response.statusCode = 506;
-        response.send(error)
+        response.statusCode = error.statusCode;
+        response.errMessage = error.errMessage;
     }
 });
 

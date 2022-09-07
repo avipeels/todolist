@@ -15,9 +15,11 @@ async function findById(key) {
         const result = await collection.get(key);
         return result.content;
     } catch (err) {
-        console.error(err);
         if (err instanceof couchbase.DocumentNotFoundError) {
-            throw new RepositoryError(`Failed to load todolist for key: ${key}`)
+            return {
+                statusCode: 404,
+                errMessage: err.name
+            }
         }
         throw err;
     }
