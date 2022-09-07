@@ -13,15 +13,11 @@ let scope;
  */
 async function couchbaseConnect() {
     if (cluster == null) {
-        console.log('process.env');
-        console.log(process.env);
         cluster = await couchbase.connect('couchbase://127.0.0.1', {
             username: 'Admin',
             password: 'InTeL(38*',
         });
     }
-    console.log('cluster - printed from connectionManager');
-    console.log(cluster);
     return cluster;
 }
 

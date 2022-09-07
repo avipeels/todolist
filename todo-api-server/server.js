@@ -1,58 +1,29 @@
-require('dotenv').config();
-const express = require('express');
-const path = require('path');
-var morgan = require('morgan')
-
-// create "middleware"
-
-const app = express();
-const bodyParser = require('body-parser');
-var logger = morgan('combined');
-
-const port = 3000;
-
-// const todoListController = require('./controllers/todoListController');
-
 const todoListRepository = require('./repository/todoListRepository');
 
-// Configuring body parser middleware
-app.use(bodyParser.urlencoded({
-    extended: false
-}));
-app.use(bodyParser.json());
-
-app.use(logger);
-
-app.get('/todolist', function (req, res) {
-    res.send('getting list of todos')
+const fastify = require('fastify')({
+    logger: true
 })
 
-app.get('/todolist/:todolistId', async function (req, res) {
-    const todolistId = req.params.todolistId;
-
-    console.debug(`getting todolist for key: ${todolistId}`);
-
-    // Probably should try/catch and return a proper error code at this level
+fastify.get('/todolist/:todolistId', async (request, response) => {
+    const id = request.params.todolistId;
     try {
-        const todolist = await todoListRepository.findById(todolistId);
-        res.send(todolist);
+        const todoList = await todoListRepository.findById(id);
+        response.send(todoList);
     } catch (error) {
-        res.statusCode = 400;
-        res.send(error);
-        // res.send("Something went wrong with the request");
+        response.statusCode = 506;
+        response.send(error)
     }
-})
-
-// error handler
-app.use((err, req, res, next) => {
-    if (err) {
-        res.status(500).send({
-            error: err,
-        });
-        return;
-    }
-
-    next();
 });
 
-app.listen(port, () => console.log(`Couchify Server listening on port ${port}!`));
+const start = async () => {
+    try {
+        await fastify.listen({
+            port: 3000
+        })
+    } catch (err) {
+        fastify.log.error(error);
+        process.exit(1);
+    }
+}
+
+start();

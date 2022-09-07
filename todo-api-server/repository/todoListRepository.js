@@ -9,9 +9,6 @@ async function findById(key) {
     cluster = await connectionManager.couchbaseConnect();
     bucket = await connectionManager.getBucket('todolist');
     scope = await connectionManager.getScope('todolist');
-    console.log(cluster);
-    console.log(bucket);
-    console.log(scope);
     // And select the collection
     const collection = scope.collection('todolist');
     try {
