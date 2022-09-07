@@ -17,10 +17,7 @@ async function findById(key) {
         return result.content;
     } catch (err) {
         if (err instanceof couchbase.DocumentNotFoundError) {
-            return {
-                statusCode: 404,
-                errMessage: err.name
-            }
+            throw new RepositoryError('Document doesnot exist', 404);
         }
         throw err;
     }
@@ -43,9 +40,25 @@ async function create(todo) {
         throw err;
     }
 }
+
+async function remove(id) {
+    cluster = await connectionManager.couchbaseConnect();
+    bucket = await connectionManager.getBucket('todolist');
+    scope = await connectionManager.getScope('todolist');
+    const collection = scope.collection('todolist');
+    try {
+        const todo = await collection.remove(id);
+    } catch (err) {
+        if (err instanceof couchbase.DocumentNotFoundError) {
+            throw new RepositoryError('Document doesnot exist', 404);
+        }
+        throw err;
+    }
+}
 /**
  * Export the defined public methods
  */
 // Key/Value methods
 exports.findById = findById;
 exports.create = create;
+exports.remove = remove;

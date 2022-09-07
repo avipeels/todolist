@@ -17,22 +17,38 @@ const schema = {
     body: todoListBodyJsonSchema
 }
 
-fastify.get('/todolist/:todolistId', async (request, response) => {
-    const id = request.params.todolistId;
+fastify.get('/api/todolist/:id', async (request, response) => {
+    const id = request.params.id;
     try {
         const todoList = await todoListRepository.findById(id);
         response.send(todoList);
     } catch (error) {
-        response.statusCode = error.statusCode;
-        response.errMessage = error.errMessage;
+        response.send({
+            status: error.status,
+            message: error.message
+        })
+
     }
 });
 
-fastify.post('/todolist/todo', {
+fastify.post('/api/todolist/todo', {
     schema
 }, async (request, response) => {
     const todo = await todoListRepository.create(request.body);
     response.send(todo);
+});
+
+fastify.delete('/api/todolist/:id', async (request, response) => {
+    const id = request.params.id;
+    try {
+        const todo = await todoListRepository.remove(id);
+        response.send(todo);
+    } catch (error) {
+        response.send({
+            status: error.status,
+            message: error.message
+        })
+    }
 });
 
 const start = async () => {
