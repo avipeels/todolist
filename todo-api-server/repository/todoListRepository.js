@@ -6,8 +6,6 @@ const {
 
 async function findById(key) {
     // Initialize the cluster, bucket and scope
-    console.log('key --printed from  findById');
-    console.log(key);
     cluster = await connectionManager.couchbaseConnect();
     bucket = await connectionManager.getBucket('todolist');
     scope = await connectionManager.getScope('todolist');

@@ -24,7 +24,6 @@ app.use(bodyParser.json());
 app.use(logger);
 
 app.get('/todolist', function (req, res) {
-    console.log(req);
     res.send('getting list of todos')
 })
 
