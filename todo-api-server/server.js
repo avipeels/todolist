@@ -54,7 +54,7 @@ fastify.delete('/api/todolist/:id', async (request, response) => {
 const start = async () => {
     try {
         await fastify.listen({
-            port: 3000
+            port: 5000
         })
     } catch (err) {
         fastify.log.error(err);
