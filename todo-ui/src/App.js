@@ -1,13 +1,12 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 const TodoList = () => {
   const [name, setName] = useState("");
-  const [todos, setTodos] = useState({});
+  const [todos, setTodos] = useState([]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
   }
 
   const createTodo = async (name) => {
@@ -23,8 +22,7 @@ const TodoList = () => {
   };
 
   const getTodos = async () => {
-    const key = 'f848307b-9a0a-4ae9-b915-d57dd75458a7';
-    const resp = await axios.get(`http://localhost:5000/api/todolist/${key}`);
+    const resp = await axios.get(`http://localhost:5000/api/todolist`);
     setTodos(resp.data);
   }
 
@@ -34,7 +32,7 @@ const TodoList = () => {
 
   return (
     <>
-      <p>{todos?.name}</p>
+      {todos && todos?.map(t => <p>{t.todolist.name}</p>)}
       <hr />
       <form onSubmit={handleSubmit}>
         <label>Todo:
@@ -47,9 +45,6 @@ const TodoList = () => {
         <button type="button" onClick={() => createTodo(name)}>Add Todo</button>
       </form>
     </>
-
-
-
   )
 }
 

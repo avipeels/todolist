@@ -8,10 +8,9 @@ const {
 async function getTodoList() {
     cluster = await connectionManager.couchbaseConnect();
     const bucket = await cluster.bucket('todolist');
-    // scope = await connectionManager.getBucket('todolist');
     const scope = bucket.scope('todolist');
     try {
-        const result = await scope.query(`SELECT *
+        const result = await scope.query(`SELECT meta().id, *
                                                FROM \`todolist\``);
         return result.rows;
     } catch (err) {
@@ -46,9 +45,10 @@ async function create(todo) {
     scope = await connectionManager.getScope('todolist');
     // And select the collection
     const collection = scope.collection('todolist');
+    const data = {name: todo.name, status:'new'}
     const key = uuidv4();
     try {
-        const result = await collection.insert(key, todo);
+        const result = await collection.insert(key, data);
         return key;
     } catch (err) {
         if (err instanceof couchbase.DocumentExistsError) {
