@@ -42,7 +42,7 @@ const TodoList = () => {
     <>
       {todos && todos?.map(t =>
         <>
-          <p>{t.todolist.name}</p>
+          <p>{t.name}</p>
           <button type="button" onClick={() => deleteTodo(t.id)}>Delete</button>
         </>
       )}

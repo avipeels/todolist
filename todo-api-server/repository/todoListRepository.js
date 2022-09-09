@@ -10,8 +10,8 @@ async function getTodoList() {
     const bucket = await cluster.bucket('todolist');
     const scope = bucket.scope('todolist');
     try {
-        const result = await scope.query(`SELECT meta().id, *
-                                               FROM \`todolist\``);
+        const result = await scope.query(`SELECT meta().id, name, status
+FROM \`todolist\``);
         return result.rows;
     } catch (err) {
         if (err instanceof couchbase.DocumentNotFoundError) {
@@ -45,7 +45,7 @@ async function create(todo) {
     scope = await connectionManager.getScope('todolist');
     // And select the collection
     const collection = scope.collection('todolist');
-    const data = {name: todo.name, status:'new'}
+    const data = { name: todo.name, status: 'new' }
     const key = uuidv4();
     try {
         const result = await collection.insert(key, data);
