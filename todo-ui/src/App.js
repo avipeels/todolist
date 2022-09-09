@@ -21,6 +21,14 @@ const TodoList = () => {
     }
   };
 
+  const deleteTodo = async (id) => {
+    try {
+      const todo = await axios.delete(`http://localhost:5000/api/todolist/${id}`);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   const getTodos = async () => {
     const resp = await axios.get(`http://localhost:5000/api/todolist`);
     setTodos(resp.data);
@@ -32,7 +40,12 @@ const TodoList = () => {
 
   return (
     <>
-      {todos && todos?.map(t => <p>{t.todolist.name}</p>)}
+      {todos && todos?.map(t =>
+        <>
+          <p>{t.todolist.name}</p>
+          <button type="button" onClick={() => deleteTodo(t.id)}>Delete</button>
+        </>
+      )}
       <hr />
       <form onSubmit={handleSubmit}>
         <label>Todo:
