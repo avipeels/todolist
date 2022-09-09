@@ -5,6 +5,23 @@ const {
     v4: uuidv4
 } = require('uuid');
 
+async function getTodoList() {
+    cluster = await connectionManager.couchbaseConnect();
+    const bucket = await cluster.bucket('todolist');
+    // scope = await connectionManager.getBucket('todolist');
+    const scope = bucket.scope('todolist');
+    try {
+        const result = await scope.query(`SELECT *
+                                               FROM \`todolist\``);
+        return result.rows;
+    } catch (err) {
+        if (err instanceof couchbase.DocumentNotFoundError) {
+            throw new RepositoryError('Document doesnot exist', 404);
+        }
+        throw err;
+    }
+}
+
 async function findById(key) {
     // Initialize the cluster, bucket and scope
     cluster = await connectionManager.couchbaseConnect();
@@ -62,3 +79,4 @@ async function remove(id) {
 exports.findById = findById;
 exports.create = create;
 exports.remove = remove;
+exports.getTodoList = getTodoList;

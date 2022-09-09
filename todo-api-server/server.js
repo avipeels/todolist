@@ -1,8 +1,15 @@
-const todoListRepository = require('./repository/todoListRepository');
+const cors = require('@fastify/cors');
 
 const fastify = require('fastify')({
     logger: true
 })
+
+fastify.register(
+    cors, { origin: true }
+)
+
+
+const todoListRepository = require('./repository/todoListRepository');
 
 const todoListBodyJsonSchema = {
     type: 'object',
@@ -16,6 +23,18 @@ const todoListBodyJsonSchema = {
 const schema = {
     body: todoListBodyJsonSchema
 }
+
+fastify.get('/api/todolist', async (request, response) => {
+    try {
+        const todolist = await todoListRepository.getTodoList();
+        response.send(todolist);
+    } catch (error) {
+        response.send({
+            status: error.status,
+            message: error.message
+        })
+    }
+})
 
 fastify.get('/api/todolist/:id', async (request, response) => {
     const id = request.params.id;
