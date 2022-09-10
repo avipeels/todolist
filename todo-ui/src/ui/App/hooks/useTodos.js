@@ -46,17 +46,18 @@ const useTodos = () => {
         )
     ), [todos])
 
-    const todoForm = (
-        <>
-            <label>Todo:
-                <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)} />
-            </label>
-            <button type="button" onClick={() => createTodo(name)}>Add Todo</button>
-        </>
-    );
+    const todoForm = useMemo((
+        () => (
+            <>
+                <label>Todo:
+                    <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)} />
+                </label>
+                <button type="button" onClick={() => createTodo(name)}>Add Todo</button>
+            </>
+        )), [name]);
 
     return {
         todosListMap,
