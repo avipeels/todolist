@@ -1,5 +1,10 @@
 import axios from 'axios';
 
+const getTodos = async () => {
+    const resp = await axios.get(`http://localhost:5000/api/todolist`);
+    return resp.data;
+};
+
 const createTodo = async (name) => {
     const body = {
         name
@@ -22,6 +27,7 @@ const deleteTodo = async (id) => {
 }
 
 export {
+    getTodos,
     createTodo,
     deleteTodo
 }
