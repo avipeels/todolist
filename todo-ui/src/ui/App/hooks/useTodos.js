@@ -27,11 +27,12 @@ const useTodos = () => {
         }
     }
 
+    const getTodos = async () => {
+        const resp = await axios.get(`http://localhost:5000/api/todolist`);
+        setTodos(resp.data);
+    };
+
     useEffect(() => {
-        const getTodos = async () => {
-            const resp = await axios.get(`http://localhost:5000/api/todolist`);
-            setTodos(resp.data);
-        };
         getTodos();
     }, []);
 
