@@ -1,23 +1,18 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { getTodos, createTodo, deleteTodo } from '../../../api/api';
+import React, { useState, useMemo } from 'react';
+import { createTodo, deleteTodo } from '../../../api/api';
+import { useTodoStore } from '../../../store/contextProvider/todoContext';
+import { useObserver } from 'mobx-react';
 
 const useTodos = () => {
     const [name, setName] = useState("");
-    const [todos, setTodos] = useState([]);
+    const { todoStore } = useTodoStore();
 
-    useEffect(() => {
-        const cb = async () => {
-            const todoList = await getTodos();
-            setTodos(todoList);
-        }
-        cb();
-    }, []);
-
-    const todosListMap = useMemo((
+    const todosListMap = useObserver(
         () => {
+            console.log(todoStore.todos);
             return (
                 <ul>
-                    {todos?.map(t =>
+                    {todoStore.todos?.length > 0 && todoStore.todos?.map(t =>
                         <li key={t.id}>
                             <p>{t.name}</p>
                             <button type="button" onClick={() => deleteTodo(t.id)}>Delete</button>
@@ -26,7 +21,7 @@ const useTodos = () => {
                 </ul>
             )
         }
-    ), [todos])
+    )
 
     const todoForm = useMemo((
         () => (
