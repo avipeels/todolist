@@ -1,7 +1,11 @@
 const cors = require('@fastify/cors');
 
 const fastify = require('fastify')({
-    logger: true
+    logger: {
+        transport: {
+            target: 'pino-pretty'
+        }
+    }
 })
 
 fastify.register(
@@ -53,8 +57,15 @@ fastify.get('/api/todolist/:id', async (request, response) => {
 fastify.post('/api/todolist/todo', {
     schema
 }, async (request, response) => {
-    const todo = await todoListRepository.create(request.body);
-    response.send(todo);
+    try {
+        const todo = await todoListRepository.create(request.body);
+        response.send({ name: todo.name, status: todo.status});
+    } catch (error) {
+        response.send({
+            status: error.status,
+            message: error.message
+        })
+    }
 });
 
 fastify.delete('/api/todolist/:id', async (request, response) => {

@@ -41,18 +41,19 @@ async function findById(key) {
 
 async function create(todo) {
     cluster = await connectionManager.couchbaseConnect();
-    bucket = await connectionManager.getBucket('todolist');
-    scope = await connectionManager.getScope('todolist');
-    // And select the collection
-    const collection = scope.collection('todolist');
-    const data = { name: todo.name, status: 'new' }
+    const bucket = await cluster.bucket('todolist');
+    const scope = bucket.scope('todolist');
+    const data = { "name": todo.name, "status": 'new' }
     const key = uuidv4();
+    const query = `INSERT INTO \`todolist\`
+                   VALUES ("${key}",{ "name": "${todo.name}", "status": "new" })
+                   returning {meta().id, name, status} as todo`
     try {
-        const result = await collection.insert(key, data);
-        return key;
+        const result = await scope.query(query);
+        return result.rows[0];
     } catch (err) {
         if (err instanceof couchbase.DocumentExistsError) {
-            throw new RepositoryError('Document already exists for todo');
+            throw new RepositoryError('Document already exists for todo', 500);
         }
         throw err;
     }

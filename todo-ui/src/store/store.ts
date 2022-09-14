@@ -1,20 +1,30 @@
 // https://blog.logrocket.com/using-mobx-for-large-scale-enterprise-state-management/
 // https://app.pluralsight.com/guides/real-time-chat-app-with-onsenui-and-horizon
-import { action, observable, makeAutoObservable } from 'mobx';
+//https://github.com/brandiqa/mobx-crud-example/blob/master/src/stores/store.js
+import { action, observable, makeAutoObservable, runInAction } from 'mobx';
 // @ts-ignore
-import { getTodos } from '../api/api.js';
+import { getTodos, createTodo } from '../api/api.js';
 
 export class TodoStore {
     @observable todos: { name: string, status: string }[]
 
     constructor() {
         makeAutoObservable(this);
-        this.callTodo();
+    }
+    async loadTodos() {
+        const data = await getTodos();
+        runInAction(() => {
+            this.todos = data;
+        })
     }
 
-    async callTodo() {
-        this.todos = await getTodos();
+    @action
+    createTodo = async (name: string) => {
+        const response = await createTodo(name);
+        console.log('From Mobx: ')
+        console.log(response);
+        runInAction(() => {
+            this.todos = [...this.todos, ...[{name, status: 'new' }]];
+        })
     }
 }
-
-// export default new TodoStore();

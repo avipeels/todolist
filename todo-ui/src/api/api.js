@@ -11,7 +11,7 @@ const createTodo = async (name) => {
     }
     try {
         const todo = await axios.post('http://localhost:5000/api/todolist/todo', body);
-        console.log(todo);
+        return todo;
     } catch (err) {
         console.log(err);
     }
