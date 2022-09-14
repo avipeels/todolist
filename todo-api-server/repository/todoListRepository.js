@@ -61,11 +61,14 @@ async function create(todo) {
 
 async function remove(id) {
     cluster = await connectionManager.couchbaseConnect();
-    bucket = await connectionManager.getBucket('todolist');
-    scope = await connectionManager.getScope('todolist');
-    const collection = scope.collection('todolist');
+    const bucket = await cluster.bucket('todolist');
+    const scope = bucket.scope('todolist');
+    const query = `DELETE
+                   FROM \`todolist\`
+                   WHERE meta().id=\"${id}\" RETURNING META().id;`;
     try {
-        const todo = await collection.remove(id);
+        const todos = await scope.query(query);
+        return todos.rows[0].id;
     } catch (err) {
         if (err instanceof couchbase.DocumentNotFoundError) {
             throw new RepositoryError('Document doesnot exist', 404);

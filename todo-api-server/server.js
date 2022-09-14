@@ -59,7 +59,7 @@ fastify.post('/api/todolist/todo', {
 }, async (request, response) => {
     try {
         const todo = await todoListRepository.create(request.body);
-        response.send({ name: todo.name, status: todo.status});
+        response.send(todo);
     } catch (error) {
         response.send({
             status: error.status,

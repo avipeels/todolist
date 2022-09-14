@@ -1,15 +1,14 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { deleteTodo } from '../../../api/api';
 import { useTodoStore } from '../../../store/contextProvider/todoContext';
 
 const useTodos = () => {
     const [name, setName] = useState("");
     const { todoStore } = useTodoStore();
-    const { createTodo } = todoStore;
+    const { createTodo, deleteTodo } = todoStore;
 
     useEffect(() => {
         todoStore.loadTodos();
-    }, []);
+    }, [todoStore]);
 
     const todosListMap = useMemo(() => {
         return (
@@ -22,7 +21,7 @@ const useTodos = () => {
                 )}
             </ul>
         )
-    }, [todoStore.todos])
+    }, [deleteTodo, todoStore.todos])
 
 
     const todoForm = useMemo((

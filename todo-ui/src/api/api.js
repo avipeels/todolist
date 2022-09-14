@@ -20,7 +20,7 @@ const createTodo = async (name) => {
 const deleteTodo = async (id) => {
     try {
         const todo = await axios.delete(`http://localhost:5000/api/todolist/${id}`);
-        console.log(todo);
+        return todo;
     } catch (error) {
         console.log(error);
     }

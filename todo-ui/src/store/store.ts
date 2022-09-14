@@ -3,10 +3,12 @@
 //https://github.com/brandiqa/mobx-crud-example/blob/master/src/stores/store.js
 import { action, observable, makeAutoObservable, runInAction } from 'mobx';
 // @ts-ignore
-import { getTodos, createTodo } from '../api/api.js';
+import { getTodos, createTodo, deleteTodo } from '../api/api.js';
 
 export class TodoStore {
-    @observable todos: { name: string, status: string }[]
+    @observable todos: {
+        id: number; name: string, status: string
+    }[]
 
     constructor() {
         makeAutoObservable(this);
@@ -21,10 +23,23 @@ export class TodoStore {
     @action
     createTodo = async (name: string) => {
         const response = await createTodo(name);
-        console.log('From Mobx: ')
-        console.log(response);
+
         runInAction(() => {
-            this.todos = [...this.todos, ...[{name, status: 'new' }]];
+            this.todos = [...this.todos, ...[{ name: response.data.todo.name, status: response.data.todo.status, id: response.data.todo.id }]];
         })
+    }
+
+    @action
+    deleteTodo = async (id: string) => {
+        const response = await deleteTodo(id);
+
+        runInAction(() => {
+            // @ts-ignore
+            const index = this.todos.findIndex(todo => todo.id === response.data);
+            const partOne = this.todos.slice(0, index);
+            const partTwo = this.todos.splice(index + 1)
+            this.todos = [...partOne, ...partTwo];
+        })
+
     }
 }
